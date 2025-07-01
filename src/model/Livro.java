@@ -41,6 +41,18 @@ public class Livro {
         return disponivel;
     }
 
+    public void emprestar() {
+        this.disponivel = false;
+        this.dataEmprestimo = LocalDateTime.now();
+        this.dataDevolucao = this.dataEmprestimo.plusDays(7);
+    }
+
+    public void devolver() {
+        this.disponivel = true;
+        this.dataEmprestimo = null;
+        this.dataDevolucao = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return String.format("ID: %-3d | Título: %-20s | Autor: %-20s | Ano: %-5d | Disponível: %s",

@@ -40,4 +40,11 @@ public class Livro {
     public boolean isDisponivel() {
         return disponivel;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %-3d | Título: %-20s | Autor: %-20s | Ano: %-5d | Disponível: %s",
+                id, titulo, autor, ano,
+                disponivel ? "Sim" : "Não");
+    }
 }

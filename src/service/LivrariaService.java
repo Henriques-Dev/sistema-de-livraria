@@ -3,6 +3,8 @@ package service;
 import model.Livro;
 import utils.Menu;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -31,10 +33,13 @@ public class LivrariaService {
                     listarLivros();
                     break;
                 case 3:
+                    pegarLivroEmprestado();
                     break;
                 case 4:
+                    devolverLivroEmprestado();
                     break;
                 case 5:
+                    deletarLivro();
                     break;
                 case 6:
                     System.out.println();
@@ -67,6 +72,90 @@ public class LivrariaService {
         } else {
             System.out.println("\n=== Lista de Livros ===");
             livros.forEach(System.out::println);
+        }
+    }
+
+    public void pegarLivroEmprestado() {
+        listarLivros();
+        System.out.print("\nDigite o ID do livro que deseja pegar emprestado: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Livro livroEscolhido = livros.stream()
+                .filter(livro -> livro.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (livroEscolhido == null) {
+            System.out.println("❌ Livro não encontrado.");
+        } else if (livroEscolhido.isDisponivel()) {
+            livroEscolhido.emprestar();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+            String dataEmprestimoFormatada = livroEscolhido.getDataEmprestimo().format(formatter);
+            String dataDevolucaoFormatada = livroEscolhido.getDataDevolucao().format(formatter);
+
+            System.out.println("✅ Livro emprestado com sucesso!");
+            System.out.println("📅 Data de empréstimo: " + dataEmprestimoFormatada);
+            System.out.println("📅 Data de devolução: " + dataDevolucaoFormatada);
+        } else {
+            System.out.println("⚠️ Livro já está emprestado.");
+        }
+    }
+
+    public void devolverLivroEmprestado() {
+        List<Livro> livrosEmprestados = livros.stream()
+                .filter(livro -> !livro.isDisponivel())
+                .toList();
+
+        if (livrosEmprestados.isEmpty()) {
+            System.out.println("⚠️ Não há livros emprestados.");
+            return;
+        }
+
+        System.out.println("\n=== Livros emprestados ===");
+        livrosEmprestados.forEach(System.out::println);
+
+        System.out.print("\nDigite o ID do livro que deseja devolver: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Livro livroEscolhido = livrosEmprestados.stream()
+                .filter(livro -> livro.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (livroEscolhido == null) {
+            System.out.println("❌ Livro não encontrado.");
+        } else {
+            LocalDateTime dataEmprestimo = livroEscolhido.getDataEmprestimo();
+            LocalDateTime dataDevolucaoAtual = LocalDateTime.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+
+            livroEscolhido.devolver();
+
+            System.out.println("✅ Livro devolvido com sucesso!");
+            System.out.println("📅 Data de empréstimo: " + dataEmprestimo.format(formatter));
+            System.out.println("📅 Data de devolução: " + dataDevolucaoAtual.format(formatter));
+        }
+    }
+
+    public void deletarLivro() {
+        listarLivros();
+        System.out.print("\nDigite o ID do livro que deseja deletar: ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        Livro livroEscolhido = livros.stream()
+                .filter(livro -> livro.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (livroEscolhido == null) {
+            System.out.println("❌ Livro não encontrado.");
+        } else if (livroEscolhido.isDisponivel()){
+            System.out.println("✅ Livro deletado com sucesso!");
+            livros.remove(livroEscolhido);
+        } else {
+            System.out.println("⚠️ Livro não pode ser deletado pois está emprestado.");
         }
     }
 }

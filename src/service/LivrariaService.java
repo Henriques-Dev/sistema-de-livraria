@@ -52,18 +52,38 @@ public class LivrariaService {
     }
 
     public void cadastrarLivro() {
-        System.out.println();
-        System.out.println("=== Cadastro de Livro ===");
-        System.out.print("Digite o título do livro: ");
-        String titulo = scan.nextLine();
-        System.out.print("Digite o autor do livro: ");
-        String autor = scan.nextLine();
-        System.out.print("Digite o ano de publicação do livro: ");
-        int ano = Integer.parseInt(scan.nextLine());
-        System.out.println();
+        char continuar;
+        do {
+            System.out.println();
+            System.out.println("=== Cadastro de Livro ===");
+            System.out.print("Digite o título do livro: ");
+            String titulo = scan.nextLine();
+            System.out.print("Digite o autor do livro: ");
+            String autor = scan.nextLine();
+            System.out.print("Digite o ano de publicação do livro: ");
+            int ano = Integer.parseInt(scan.nextLine());
+            System.out.println();
 
-        livros.add(new Livro(titulo, autor, ano));
-        System.out.println("✅ Livro cadastrado com sucesso!");
+            livros.add(new Livro(titulo, autor, ano));
+            System.out.println("✅ Livro cadastrado com sucesso!");
+
+            while (true) {
+                System.out.print("Deseja cadastrar outro livro? (s/n): ");
+                String resposta = scan.nextLine().trim().toLowerCase();
+
+                if (resposta.equalsIgnoreCase("s")) {
+                    continuar = 's';
+                    break;
+                } else if (resposta.equalsIgnoreCase("n")) {
+                    continuar = 'n';
+                    break;
+                } else {
+                    System.out.println("❌ Resposta inválida. Digite 's' para sim ou 'n' para não.");
+                    System.out.println();
+                }
+            }
+        } while (continuar == 's');
+
     }
 
     public void listarLivros() {
